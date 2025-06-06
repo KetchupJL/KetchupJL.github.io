@@ -46,7 +46,8 @@ search_provider          : # lunr (default), algolia, google
 lunr:
   search_within_pages    : false
 
-
+navigation:
+  enabled: true
 # Social Sharing
 social:
   type: "Person"
