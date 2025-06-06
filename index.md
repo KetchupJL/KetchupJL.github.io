@@ -4,35 +4,38 @@ title: "James Lewis"
 subtitle: "Data Scientist & Quant Developer"
 header:
   overlay_color: "#000"
-  overlay_filter: "0.3"
+  overlay_filter: "0.4"
   overlay_image: /assets/images/cover.jpg
   actions:
     - label: "View Portfolio"
       url: "/portfolio/"
     - label: "Read Blog"
       url: "/blog/"
-excerpt: "MSc Data Science & Statistics | Real-Time Trading Bots | Crypto Forecasting | Machine Learning | Blockchain Analytics"
+excerpt: "MSc Data Science & Statistics • Real-Time Trading Bots • Crypto Forecasting • Blockchain Analytics"
 ---
 
-## Welcome 👋
+## 👋 Welcome
 
-I’m James Lewis — a data scientist and algorithmic trading enthusiast focused on the intersection of AI, finance, and blockchain. With a background in data science, statistical modelling and real-time system design, I build tools that act, not just observe.
+I'm **James Lewis** — a data scientist and algorithmic trading specialist with a deep interest in AI, markets, and automation. I build real-time trading bots, predictive pipelines, and crypto analytics systems using machine learning and statistical modelling.
 
-This site is a hub for my research, projects, and personal work across:
+This website is my personal workspace and professional portfolio. You'll find:
 
-- Algorithmic Trading Systems  
-- Crypto Forecasting & Blockchain Analytics  
-- Quantitative Modelling  
-- Academic Research in AI, Finance and Machine Learning
+- ⚙️ Projects on trading, quant modelling, and DeFi systems
+- 📘 Technical blog posts and learning notes
+- 🎓 Academic research in AI, statistics, and blockchain
+- 📈 Case studies of real-world experiments and strategies
+
+Whether you’re here to explore my work or collaborate, I’m glad you stopped by.
 
 ---
+
+## 🔍 Explore
 
 {% include feature_row id="highlights" %}
-
 {% include feature_row id="projects" %}
 
 ---
 
-## Recent Posts
+## 📬 Blog Posts
 
-[View All Posts](/blog/)
+[→ View All Posts](/blog/)
