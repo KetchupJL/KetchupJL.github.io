@@ -12,10 +12,6 @@ jobs:
     if: github.repository == 'mmistakes/minimal-mistakes'
     runs-on: ubuntu-latest
     steps:
-
-    - name: Configure Git Safe Directory
-      run: git config --global --add safe.directory /github/workspace
-
     - uses: actions/checkout@v4
       with:
         fetch-depth: 0
