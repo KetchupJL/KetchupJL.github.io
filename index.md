@@ -5,7 +5,7 @@ subtitle: "Data Scientist & Quant Developer"
 header:
   overlay_color: "#000"
   overlay_filter: "0.4"
-  overlay_image: /assets/background.jpg
+  overlay_image: /assets/background.png
   actions:
     - label: "View Portfolio"
       url: "/portfolio/"
