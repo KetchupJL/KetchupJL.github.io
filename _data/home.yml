@@ -3,7 +3,7 @@ highlights:
     title: "Real-Time Trading Bots"
     excerpt: "Automating alpha with live market data, crypto signals, and ML classifiers."
 
-  - image_path: "/assets/images/lightgbm.png"
+  - image_path: "/assets/lightgbm.png"
     title: "Predictive Modelling"
     excerpt: "From Kaggle pipelines to risk-adjusted interval forecasts and quant systems."
 
@@ -17,7 +17,7 @@ projects:
     excerpt: "MSc dissertation: using QRF and bootstrapped LightGBM for 72h interval forecasts."
     url: "/portfolio/"
 
-  - image_path: "/assets/images/jarvis.webp"
+  - image_path: "/assets/jarvis.webp"
     title: "MLTradingBot"
     excerpt: "Full pipeline: data ingestion, feature engineering, model training, signal output."
     url: "/portfolio/"
