@@ -26,7 +26,7 @@ url                      : "https://ketchupjl.github.io/"
 baseurl                  : # the subpath of your site, e.g. "/blog"
 repository               : "KetchupJL/KetchupJL.github.io"
 teaser                   : # path of fallback teaser image, e.g. "/assets/images/500x300.png"
-logo                     : "/assets/images/logo.jpg
+logo                     : "/assets/images/logo.jpg"
 masthead_title           : "James Lewis"
 breadcrumbs              : true
 words_per_minute         : 200
