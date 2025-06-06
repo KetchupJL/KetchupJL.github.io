@@ -1,23 +1,28 @@
 highlights:
   - image_path: "/assets/chart.png"
+    alt: "Chart"
     title: "Real-Time Trading Bots"
     excerpt: "Automating alpha with live market data, crypto signals, and ML classifiers."
 
   - image_path: "/assets/lightgbm.png"
+    alt: "LightGBM model"
     title: "Predictive Modelling"
     excerpt: "From Kaggle pipelines to risk-adjusted interval forecasts and quant systems."
 
   - image_path: "/assets/data.jpeg"
+    alt: "Blockchain"
     title: "Blockchain Analytics"
     excerpt: "Solana, DeFi, and on-chain market microstructure insights."
 
 projects:
   - image_path: "/assets/qrf.png"
+    alt: "Quantile forecast"
     title: "Quantile Forecasting on Solana Tokens"
     excerpt: "MSc dissertation using QRF and bootstrapped LightGBM for 72h interval forecasts."
     url: "/portfolio/"
 
   - image_path: "/assets/jarvis.webp"
+    alt: "Trading bot"
     title: "MLTradingBot"
     excerpt: "Full pipeline: data ingestion, feature engineering, model training, signal output."
     url: "/portfolio/"

@@ -31,7 +31,8 @@ Whether you’re here to explore my work or collaborate, I’m glad you stopped 
 
 ## 🔍 Explore
 {% include feature_row id="highlights" type="center" %}
-{% include feature_row id="projects" type="center" %}
+
+{% include feature_row id="projects" %}
 
 
 
