@@ -31,11 +31,8 @@ Whether you’re here to explore my work or collaborate, I’m glad you stopped 
 
 ## 🔍 Explore
 
-{% if site.data.home.highlights %}
-  {% include feature_row id="highlights" %}
-{% else %}
-  <p style="color:red">🚨 Highlights not loading — check _data/home.yml</p>
-{% endif %}
+{% include feature_row id="highlights" %}
+{% include feature_row id="projects" %}
 
 
 ---
