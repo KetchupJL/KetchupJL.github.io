@@ -25,8 +25,8 @@ url                      : "https://ketchupjl.github.io/"
 baseurl                  : # the subpath of your site, e.g. "/blog"
 repository               : "KetchupJL/KetchupJL.github.io"
 teaser                   : # path of fallback teaser image, e.g. "/assets/images/500x300.png"
-logo                     : "/assets/images/logo.jpg"
-masthead_title           : "James Lewis"
+logo                     : "/assets/logo.jpg"
+masthead_title           :
 breadcrumbs              : true
 words_per_minute         : 200
 enable_copy_code_button  : true
@@ -58,7 +58,7 @@ social:
 # Site Author
 author:
   name      : "James Lewis"
-  avatar    : "/assets/images/Mugshot.jpg"
+  avatar    : "/assets/Mugshot.jpg"
   bio       : >
     MSc Data Science & Statistics @Exeter. Building real-time trading bots, crypto analytics tools, and predictive ML pipelines.
   location  : "United Kingdom"
