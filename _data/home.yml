@@ -14,7 +14,7 @@ highlights:
 projects:
   - image_path: "/assets/qrf.png"
     title: "Quantile Forecasting on Solana Tokens"
-    excerpt: "MSc dissertation: using QRF and bootstrapped LightGBM for 72h interval forecasts."
+    excerpt: "MSc dissertation using QRF and bootstrapped LightGBM for 72h interval forecasts."
     url: "/portfolio/"
 
   - image_path: "/assets/jarvis.webp"
