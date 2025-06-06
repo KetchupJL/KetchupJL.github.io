@@ -44,7 +44,7 @@ search                   : # true, false (default)
 search_full_content      : # true, false (default)
 search_provider          : # lunr (default), algolia, google
 lunr:
-  search_within_pages    : true
+  search_within_pages    : false
 
 
 # Social Sharing
@@ -54,14 +54,6 @@ social:
   links:
     - "https://github.com/KetchupJL"
     - "https://linkedin.com/in/james-lewis3/"
-
-# Analytics
-analytics:
-  provider               : # false (default), "google", "google-universal", "google-gtag", "custom"
-  google:
-    tracking_id          :
-    anonymize_ip         : # true, false (default)
-
 
 # Site Author
 author:
