@@ -35,6 +35,4 @@ This site is a hub for my research, projects, and personal work across:
 
 ## Recent Posts
 
-{% include blog_feed limit=3 %}
-
 [View All Posts](/blog/)
