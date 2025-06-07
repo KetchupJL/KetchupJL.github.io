@@ -22,7 +22,7 @@ highlights:
     title: "Predictive Modelling"
     excerpt: "From Kaggle pipelines to risk-adjusted interval forecasts and quant systems."
 
-  - image_path: "/assets/data.jpeg"
+  - image_path: "/assets/data.jpg"
     title: "Blockchain Analytics"
     excerpt: "Solana, DeFi, and on-chain market microstructure insights."
 
