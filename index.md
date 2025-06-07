@@ -60,7 +60,7 @@ This site is my research portfolio and personal knowledge hub. You’ll find:
 
 ## 📂 Projects
 
-{% include feature_row id="projects" type="left" %}
+{% include feature_row id="projects" type="right" %}
 
 ---
 

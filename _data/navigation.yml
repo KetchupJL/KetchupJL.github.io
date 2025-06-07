@@ -11,5 +11,8 @@ main:
   - title: "About"
     url: "/about/"
 
+  - title: "CV"
+    url: "/CV/"
+
   - title: "Contact"
     url: "/contact/"
