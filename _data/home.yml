@@ -21,3 +21,13 @@ projects:
     title: "MLTradingBot"
     excerpt: "Full pipeline: data ingestion, feature engineering, model training, signal output."
     url: "/portfolio/"
+
+
+feature_row: 
+  - image_path: "/assets/solana.png"
+    alt: "Solana"
+    title: "Solana Blockchain Analytics"
+    excerpt: "On-chain data analysis, market microstructure, and DeFi insights."
+    url: "/portfolio/"
+
+{% include feature_row %}
