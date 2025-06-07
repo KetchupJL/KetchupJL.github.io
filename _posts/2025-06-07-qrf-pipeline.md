@@ -3,7 +3,7 @@ layout: single
 title: "From Chaos to Calibration: Kickstarting My Solana Forecasting Project"
 excerpt: "How I cleaned 6 months of DeFi data to build probabilistic return models for Solana tokens."
 date: 2025-06-07
-author_profile: true
+author_profile: false
 read_time: true
 header:
   overlay_image: /assets/images/data-overview-placeholder.png
