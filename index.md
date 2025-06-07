@@ -66,7 +66,7 @@ This site is my research portfolio and personal knowledge hub. You’ll find:
 
 ## 🧰 Tools I Work With
 
-<p align="center" style="max-width: 900px; margin: auto; font-size: 14px;">
+<p align="center" style="max-width: 1000px; margin: auto; padding: 0 1rem;">
   <img src="https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white"/>
   <img src="https://img.shields.io/badge/R-276DC3?style=flat-square&logo=r&logoColor=white"/>
   <img src="https://img.shields.io/badge/SQL-336791?style=flat-square&logo=mysql&logoColor=white"/>
