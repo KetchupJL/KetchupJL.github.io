@@ -23,7 +23,7 @@ highlights:
     title: "ML Forecasting Pipelines"
     excerpt: "Advanced quant models including QRFs and LightGBM with engineered alpha and confidence bounds."
 
-  - image_path: "/assets/data.jpeg"
+  - image_path: "/assets/data.jpg"
     title: "Blockchain Analytics"
     excerpt: "Insights from Solana and EVM chains: wallet flows, token launches, and on-chain microstructure."
 
