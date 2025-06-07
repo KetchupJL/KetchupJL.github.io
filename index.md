@@ -37,6 +37,28 @@ projects:
     title: "MLTradingBot"
     excerpt: "Full-stack bot infrastructure: data ingestion, feature engineering, live signal processing."
     url: "/portfolio/"
+
+techstack:
+  - image_path: "/assets/icons/python.jpeg"
+    title: "Python & R"
+    excerpt: "My core data science languages — used for modelling, scripting, and production workflows."
+
+  - image_path: "/assets/icons/ML.jpg"
+    title: "ML Toolkits"
+    excerpt: "TensorFlow, Pytorch, Scikit-learn — from predictive pipelines to interpretable insights."
+
+  - image_path: "/assets/icons/solana.jpeg"
+    title: "Crypto & Web3"
+    excerpt: "Solana blockchain analytics, token tracking, smart alpha signals, and live execution systems."
+
+  - image_path: "/assets/icons/jupyter.png"
+    title: "Notebook Ecosystem"
+    excerpt: "Jupyter, Quarto and RStudio for fast iteration, reproducible research, and exploratory reporting."
+
+  - image_path: "/assets/icons/cloud.png"
+    title: "Cloud + Engineering"
+    excerpt: "PostgreSQL, FastAPI, BigQuery and Kubernetes — used for real-time ingestion and scalable pipelines."
+
 ---
 
 <section style="margin-top: 2.5rem; text-align: center;">
@@ -69,6 +91,12 @@ Coming soon — tutorials, system design breakdowns, research insights and more.
 
 ---
 
+## 🧰 Tools I Use
+
+{% include feature_row id="techstack" type="center" %}
+
+---
+
 <style>
 .page__content {
   max-width: 900px;
@@ -77,5 +105,23 @@ Coming soon — tutorials, system design breakdowns, research insights and more.
 }
 .feature__item .archive__item-excerpt {
   font-size: 0.95rem;
+}
+</style>
+
+<style>
+.feature__wrapper {
+  margin-bottom: 2.5rem;
+}
+.feature__item {
+  transition: box-shadow 0.3s ease, transform 0.2s ease;
+  border-radius: 8px;
+}
+.feature__item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+}
+.feature__item .archive__item-excerpt {
+  font-size: 0.95rem;
+  color: #444;
 }
 </style>
