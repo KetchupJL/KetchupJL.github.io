@@ -1,8 +1,14 @@
 ---
+layout: single
 title: "From Chaos to Calibration: Kickstarting My Solana Forecasting Project"
-excerpt: "How I gathered and cleaned six months of token, on-chain, and DeFi data to build probabilistic return models for Solana tokens."
+excerpt: "How I cleaned 6 months of DeFi data to build probabilistic return models for Solana tokens."
 date: 2025-06-07
 author_profile: true
+read_time: true
+header:
+  overlay_image: /assets/images/data-overview-placeholder.png
+  overlay_filter: "0.3"
+  caption: "Quantifying risk in Solana's DeFi frontier"
 tags:
   - Solana
   - Quant Finance
@@ -11,9 +17,12 @@ tags:
   - Forecasting
 ---
 
-Welcome to the first post in my MSc dissertation series, where I explore **quantile-based return forecasting** for Solana mid-cap tokens. This blog documents not only research progress but also the process, code, and reflections as I work toward building **risk-calibrated 72-hour return interval forecasts**.
+> This research is ongoing and subject to updates.  
+{:.notice--info}
 
-This is **not** just about "price prediction." It's about estimating the **10th, 50th, and 90th percentile** returns, quantifying **tail risk**, and helping traders or analysts assess the distribution of returns—especially under high volatility and skewed conditions typical in DeFi.
+Welcome to the first post in my MSc dissertation series, where I explore **quantile-based return forecasting** for mid-cap Solana tokens. This series will document my research progress, modelling choices, and lessons learned as I build **risk-calibrated 72-hour return interval forecasts**.
+
+This isn’t just about predicting price — it’s about quantifying uncertainty and **estimating tail risk** using percentiles:
 
 ---
 
@@ -26,14 +35,15 @@ In volatile crypto markets, especially for thinly traded mid-cap tokens, traditi
 > - 50th percentile (median): +1.4%  
 > - 90th percentile: +16.7%
 
-With these, we can answer questions like:
-- How bad could things get in the next 3 days?
-- Is this an unusually asymmetric return distribution?
-- How wide is the uncertainty—should we size down?
+These intervals help traders answer questions like:
+- _How bad could this go?_  
+- _Is this distribution unusually skewed?_  
+- _Should I size down given uncertainty?_ 
 
-My core model is the **Quantile Regression Forest (QRF)**, compared against two baselines:
-1. **Linear Quantile Regression**
-2. **LightGBM + Bootstrap Intervals**
+I compare three models:
+- ✅ **Quantile Regression Forests (QRF)** [main]
+- 🔁 **Bootstrap LightGBM**
+- 📈 **Linear Quantile Regression**
 
 ---
 
@@ -60,6 +70,9 @@ I gathered data for **23 Solana tokens** that meet the criteria of ≥$50M marke
 
 📌 *I could not obtain reliable sentiment data (e.g., Twitter or Telegram mentions), despite trying multiple sources and scraping attempts. I may explore [LunarCrush](https://lunarcrush.com/) later.*
 
+{% include figure image_path="/assets/images/myplot.png" alt="Plot" caption="Some Caption" class="align-center" %}
+
+
 ---
 
 ## 📸 Visual Snapshot of the Dataset
@@ -68,11 +81,16 @@ I gathered data for **23 Solana tokens** that meet the criteria of ≥$50M marke
 
 {% include figure image_path="/assets/images/data-overview-placeholder.png" alt="Data overview visual" caption="Example of wallet activity and SOL price trends" %}
 
+{% include figure image_path="/assets/images/myplot.png" alt="Plot" caption="Some Caption" class="align-center" %}
+
+
 ---
 
 ## 🛠️ Example Feature Engineering
 
 Using 12h data, I engineered features capturing momentum, volatility, liquidity, and network activity.
 
-```python
-# Placeholder: drop your Python feature engineering code here
+<pre> ```python import pandas as pd df = pd.read_csv("solana_tokens.csv") df["volatility"] = df["close"].rolling(12).std() ``` </pre>
+
+
+{% include figure image_path="/assets/images/myplot.png" alt="Plot" caption="Some Caption" class="align-center" %}
