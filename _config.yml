@@ -249,3 +249,9 @@ defaults:
       comments: # true
       share: true
       related: true
+
+minimal_mistakes_skin: "neon"  # or try "air", "contrast", "dark"
+header:
+  teaser: /assets/avatar.jpg    # optional avatar in blog cards
+paginate: 6                     # show 6 posts per page
+paginate_path: "/blog/page:num"
