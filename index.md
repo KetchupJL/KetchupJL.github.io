@@ -12,9 +12,34 @@ header:
     - label: "Read Blog"
       url: "/blog/"
 excerpt: "Data Science MSc • Algorithmic Trading • Crypto Quant Research"
+
+# Feature content blocks
+highlights:
+  - image_path: "/assets/chart.png"
+    title: "Real-Time Trading Bots"
+    excerpt: "Low-latency execution systems driven by live signal detection across DeFi and crypto markets."
+
+  - image_path: "/assets/lightgbm.png"
+    title: "ML Forecasting Pipelines"
+    excerpt: "Advanced quant models including QRFs and LightGBM with engineered alpha and confidence bounds."
+
+  - image_path: "/assets/data.jpeg"
+    title: "Blockchain Analytics"
+    excerpt: "Insights from Solana and EVM chains: wallet flows, token launches, and on-chain microstructure."
+
+projects:
+  - image_path: "/assets/qrf.png"
+    title: "Quantile Return Forecasting"
+    excerpt: "MSc dissertation forecasting 72h return intervals of mid-cap Solana tokens using interpretable ML."
+    url: "/portfolio/"
+
+  - image_path: "/assets/jarvis.webp"
+    title: "MLTradingBot"
+    excerpt: "Full-stack bot infrastructure: data ingestion, feature engineering, live signal processing."
+    url: "/portfolio/"
 ---
 
-## 👋 Welcome
+## Welcome
 
 Hi, I'm **James Lewis** — a data scientist, quant developer, and crypto-native researcher. I build real-time trading bots, ML pipelines, and blockchain analytics systems using statistical modeling and machine learning.
 
@@ -29,13 +54,13 @@ This site is my research portfolio and personal knowledge hub. You’ll find:
 
 ## 🚀 Highlights
 
-{% include feature_row id="feature_row_highlights" type="left" %}
+{% include feature_row id="highlights" type="left" %}
 
 ---
 
 ## 📂 Projects
 
-{% include feature_row id="feature_row_projects" type="left" %}
+{% include feature_row id="projects" type="left" %}
 
 ---
 
