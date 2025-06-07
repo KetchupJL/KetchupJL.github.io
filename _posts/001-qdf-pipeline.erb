@@ -1,0 +1,78 @@
+---
+title: "From Chaos to Calibration: Kickstarting My Solana Forecasting Project"
+excerpt: "How I gathered and cleaned six months of token, on-chain, and DeFi data to build probabilistic return models for Solana tokens."
+date: 2025-06-07
+author_profile: true
+tags:
+  - Solana
+  - Quant Finance
+  - Data Science
+  - Machine Learning
+  - Forecasting
+---
+
+Welcome to the first post in my MSc dissertation series, where I explore **quantile-based return forecasting** for Solana mid-cap tokens. This blog documents not only research progress but also the process, code, and reflections as I work toward building **risk-calibrated 72-hour return interval forecasts**.
+
+This is **not** just about "price prediction." It's about estimating the **10th, 50th, and 90th percentile** returns, quantifying **tail risk**, and helping traders or analysts assess the distribution of returns—especially under high volatility and skewed conditions typical in DeFi.
+
+---
+
+## 📡 What This Project Is All About
+
+In volatile crypto markets, especially for thinly traded mid-cap tokens, traditional models often break. This project focuses on forecasting not just a point estimate, but an **interval**—like this:
+
+> **Predicted 72h Return Interval:**
+> - 10th percentile: -12.3%  
+> - 50th percentile (median): +1.4%  
+> - 90th percentile: +16.7%
+
+With these, we can answer questions like:
+- How bad could things get in the next 3 days?
+- Is this an unusually asymmetric return distribution?
+- How wide is the uncertainty—should we size down?
+
+My core model is the **Quantile Regression Forest (QRF)**, compared against two baselines:
+1. **Linear Quantile Regression**
+2. **LightGBM + Bootstrap Intervals**
+
+---
+
+## 🧱 Data Collection: From Raw to Structured
+
+I gathered data for **23 Solana tokens** that meet the criteria of ≥$50M market cap and ≥3 months listing age.
+
+### ✅ What I Managed to Collect
+
+**12-Hour Aggregated Streams:**
+
+- OHLCV bars (per token)
+- Wallet count growth
+- Transfer count
+- New token accounts
+
+**Global Context Features:**
+
+- SOL/USD price (OHLCV)
+- ETH, BTC prices
+- Solana DeFi TVL
+- Solana transaction counts
+- SPL program instruction counts
+
+📌 *I could not obtain reliable sentiment data (e.g., Twitter or Telegram mentions), despite trying multiple sources and scraping attempts. I may explore [LunarCrush](https://lunarcrush.com/) later.*
+
+---
+
+## 📸 Visual Snapshot of the Dataset
+
+*🖼️ Add a placeholder for a heatmap or EDA graphic showing token coverage over time, wallet activity, or a simple line chart of SOL price.*
+
+{% include figure image_path="/assets/images/data-overview-placeholder.png" alt="Data overview visual" caption="Example of wallet activity and SOL price trends" %}
+
+---
+
+## 🛠️ Example Feature Engineering
+
+Using 12h data, I engineered features capturing momentum, volatility, liquidity, and network activity.
+
+```python
+# Placeholder: drop your Python feature engineering code here

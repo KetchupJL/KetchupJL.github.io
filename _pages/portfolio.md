@@ -8,7 +8,7 @@ classes: wide
 
 # 🚀 Projects & Research
 
-A curated collection of technical and applied work — blending algorithmic trading, crypto analytics, and academic data science.
+A collection of technical and applied work, ranging from algorithmic trading and crypto analytics to applied data science.
 
 ---
 
