@@ -1,96 +1,148 @@
 ---
-layout: single
-title: "From Chaos to Calibration: Kickstarting My Solana Forecasting Project"
-excerpt: "How I cleaned 6 months of DeFi data to build probabilistic return models for Solana tokens."
-date: 2025-06-07
-author_profile: false
-read_time: true
-header:
-  overlay_image: /assets/images/data-overview-placeholder.png
-  overlay_filter: "0.3"
-  caption: "Quantifying risk in Solana's DeFi frontier"
+title: "Taming Chaos: How I Built a Clean Multi-Source Dataset for Solana Token Forecasting"
+excerpt: "The story behind cleaning, aligning, and imputing Solana token data for robust quantile forecasting models."
+date: 2025-06-08
+author_profile: true
 tags:
   - Solana
-  - Quant Finance
-  - Data Science
-  - Machine Learning
-  - Forecasting
+  - Crypto Forecasting
+  - Quantile Regression
+  - Data Cleaning
+  - Research Pipeline
 ---
 
-> This research is ongoing and subject to updates.  
-{:.notice--info}
+## 🧠 Why This Matters
 
-Welcome to the first post in my MSc dissertation series, where I explore **quantile-based return forecasting** for mid-cap Solana tokens. This series will document my research progress, modelling choices, and lessons learned as I build **risk-calibrated 72-hour return interval forecasts**.
+Forecasting crypto is already tough — but doing so with **distributional forecasts** (like quantile intervals) adds another layer of complexity. These models don’t just predict the return — they predict the range of possible returns, including **tail risks**.
 
-This isn’t just about predicting price — it’s about quantifying uncertainty and **estimating tail risk** using percentiles:
+That means we need precision. Missing data, unaligned tokens, or careless imputation could destroy volatility structure and bias our models.
 
----
-
-## 📡 What This Project Is All About
-
-In volatile crypto markets, especially for thinly traded mid-cap tokens, traditional models often break. This project focuses on forecasting not just a point estimate, but an **interval**—like this:
-
-> **Predicted 72h Return Interval:**
-> - 10th percentile: -12.3%  
-> - 50th percentile (median): +1.4%  
-> - 90th percentile: +16.7%
-
-These intervals help traders answer questions like:
-- _How bad could this go?_  
-- _Is this distribution unusually skewed?_  
-- _Should I size down given uncertainty?_ 
-
-I compare three models:
-- ✅ **Quantile Regression Forests (QRF)** [main]
-- 🔁 **Bootstrap LightGBM**
-- 📈 **Linear Quantile Regression**
+This post shares how I built a clean, structured dataset across **23 mid-cap Solana tokens**, combining price, liquidity, and on-chain data into a 12-hour resolution forecasting panel.
 
 ---
 
-## 🧱 Data Collection: From Raw to Structured
+## 🧩 The Raw Inputs: 12-Hour Multi-Source Panel
 
-I gathered data for **23 Solana tokens** that meet the criteria of ≥$50M market cap and ≥3 months listing age.
+I aggregated data from multiple APIs and tools into synchronized 12-hour windows.
 
-### ✅ What I Managed to Collect
+**Included Streams:**
 
-**12-Hour Aggregated Streams:**
+- OHLCV per token (via Solana DEX APIs)
+- On-chain metrics: `holder_count`, `transfer_count`, `new_token_accounts`
+- Global crypto context: SOL, ETH, BTC prices; DeFi TVL; Solana network tx count; SPL instruction count
 
-- OHLCV bars (per token)
-- Wallet count growth
-- Transfer count
-- New token accounts
-
-**Global Context Features:**
-
-- SOL/USD price (OHLCV)
-- ETH, BTC prices
-- Solana DeFi TVL
-- Solana transaction counts
-- SPL program instruction counts
-
-📌 *I could not obtain reliable sentiment data (e.g., Twitter or Telegram mentions), despite trying multiple sources and scraping attempts. I may explore [LunarCrush](https://lunarcrush.com/) later.*
-
-{% include figure image_path="/assets/images/myplot.png" alt="Plot" caption="Some Caption" class="align-center" %}
-
+🧪 See notebook:  
+[01_EDA_missingness.ipynb](https://github.com/KetchupJL/solana-qrf-interval-forecasting/blob/main/notebooks/EDA/01_EDA_missingness.ipynb)
 
 ---
 
-## 📸 Visual Snapshot of the Dataset
+## 🧹 Cleaning the OHLCV Panel
 
-*🖼️ Add a placeholder for a heatmap or EDA graphic showing token coverage over time, wallet activity, or a simple line chart of SOL price.*
+Tokens like `$COLLAT` and `titcoin` were removed due to excessive missingness or late data starts. All data was reindexed to a 12h frequency.
 
-{% include figure image_path="/assets/images/data-overview-placeholder.png" alt="Data overview visual" caption="Example of wallet activity and SOL price trends" %}
+I then clipped each token's history at the first valid OHLCV bar using this logic:
 
-{% include figure image_path="/assets/images/myplot.png" alt="Plot" caption="Some Caption" class="align-center" %}
+```python
+# Pseudocode: clip token history post-launch
+token_start = df[~df[ohlcv_cols].isnull().any(axis=1)].groupby('token')['timestamp'].min()
+df['post_launch'] = df.apply(lambda r: r['timestamp'] >= token_start.get(r['token'], r['timestamp']), axis=1)
+df = df[df['post_launch']]
+```
+---
 
+📒 See full notebook:  
+[01data_processing.ipynb](https://github.com/KetchupJL/solana-qrf-interval-forecasting/blob/main/notebooks/Data%20Processing/01data_processing.ipynb)
 
 ---
 
-## 🛠️ Example Feature Engineering
+## 🔎 Auditing the Damage: OHLCV Missingness
 
-Using 12h data, I engineered features capturing momentum, volatility, liquidity, and network activity.
+Before cleaning, **OHLCV columns had ~18% missing values**, due to low-liquidity intervals or indexer delays — not timestamp issues.
 
-<pre> ```python import pandas as pd df = pd.read_csv("solana_tokens.csv") df["volatility"] = df["close"].rolling(12).std() ``` </pre>
+This heatmap shows how gaps differ across tokens:
 
+![OHLCV missingness heatmap](/assets/images/ohlcv_missingness_heatmap.png)  
+*Green = present, Red = missing*
 
-{% include figure image_path="/assets/images/myplot.png" alt="Plot" caption="Some Caption" class="align-center" %}
+Plot from notebook:  
+[01_EDA_missingness.ipynb](https://github.com/KetchupJL/solana-qrf-interval-forecasting/blob/main/notebooks/EDA/01_EDA_missingness.ipynb)
+
+---
+
+## 🔄 Imputation Strategy: Linear > Kalman
+
+I initially considered Kalman smoothing and PCA-based methods — but rigorous testing with simulated gaps showed that **linear interpolation** actually outperformed them.
+
+```python
+# Comparison of imputation RMSE (5% simulated gaps)
+methods = {
+    'ffill_lim2': 0.09185,
+    'linear_interp': 0.06042,
+    'knn': 0.93970,
+    'kalman': 0.09185
+}
+
+➡️ **Conclusion:** Linear interpolation + 2-bar forward-fill wins.
+
+Full benchmarks in notebook:  
+[03OHLCV_cleaning_imputation.ipynb](https://github.com/KetchupJL/solana-qrf-interval-forecasting/blob/main/notebooks/Data%20Processing/03OHLCV_cleaning_imputation.ipynb)
+
+---
+
+## 📊 Audit Results
+
+After cleaning:
+
+- **Rows dropped:** 22.36%  
+- **Final rows:** 6,464  
+- **OHLCV missingness:** 0%  
+- **On-chain features missingness:** reduced and tracked
+
+Bar chart from audit:
+
+![Missingness improvement barplot](/assets/images/ohlcv_missingness_barplot.png)
+
+More visuals and breakdowns in:  
+[02cleaning_ohlcv_data.ipynb](https://github.com/KetchupJL/solana-qrf-interval-forecasting/blob/main/notebooks/Data%20Processing/02cleaning_ohlcv_data.ipynb)
+
+---
+
+## 🧠 Lessons Learned
+
+- 🔎 **Token timelines matter:** I built a `post_ohlcv_launch` flag per token to avoid spurious early entries.  
+- ⚖️ **Linear interpolation can outperform** complex models in practice — especially when gaps are small.  
+- 📉 **Removing ~22% of rows** may feel painful, but it's necessary to preserve modeling integrity.
+
+---
+
+## 🧰 The Final Product
+
+The master dataset — now stored as `solana_cleaned_imputed_final.parquet` — includes:
+
+- Fully cleaned OHLCV  
+- Timestamp-aligned token and market features  
+- Flags for imputed rows, clipped starts, and modeling-ready alignment
+
+Example preview:
+
+```python
+df_imputed[['token', 'timestamp', 'close_usd', 'holder_count']].head()
+```
+---
+
+## 🛤️ Coming Up Next...
+
+In the next post, I’ll cover how I transform this clean dataset into a **feature matrix for forecasting**:
+
+- Momentum, volatility, liquidity, and on-chain dynamics  
+- 72h target variable construction  
+- Handling `shift()`, leak prevention, and realistic forecasting frames
+
+---
+
+## 🔗 Notebooks Referenced
+
+- [01_EDA_missingness.ipynb](https://github.com/KetchupJL/solana-qrf-interval-forecasting/blob/main/notebooks/EDA/01_EDA_missingness.ipynb)  
+- [01data_processing.ipynb](https://github.com/KetchupJL/solana-qrf-interval-forecasting/blob/main/notebooks/Data%20Processing/01data_processing.ipynb)  
+- [02cleaning_ohlcv_data.ipynb](https://github.com/KetchupJL/solana-qrf-interval-forecasting/blob/main/notebooks/Data%20Processing/02cleaning_ohlcv_data.ipynb)  
+- [03OHLCV_cleaning_imputation.ipynb](https://github.com/KetchupJL/solana-qrf-interval-forecasting/blob/main/notebooks/Data%20Processing/03OHLCV_cleaning_imputation.ipynb)
