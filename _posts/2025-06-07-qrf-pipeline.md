@@ -11,25 +11,24 @@ tags:
   - Research Pipeline
 ---
 
-## Why This Matters
+## Research Under Uncertainty: Why This Work Matters
 
-Forecasting crypto is already tough, but doing so with **distributional forecasts** (like quantile intervals) adds another layer of complexity. The models I'm developing don’t just predict the return — they predict the range of possible returns, including **tail risks**.
+Building a model is only half the battle. In volatile crypto markets, the quality of your dataset defines the ceiling of your forecasting potential.
 
-That means we need precision. Missing data, unaligned tokens, or careless imputation could destroy volatility structure and bias our models.
-
-This post shares how I built a clean, structured dataset across **23 mid-cap Solana tokens**, combining price, liquidity, and on-chain data into a 12-hour resolution forecasting panel.
+My aim wasn’t just to build a dataset — it was to construct a research-grade panel that could support **tail-sensitive, quantile-based forecasting**. In this post, I share how I assembled and audited the data foundation for this project: the steps I took to make sure that what I model tomorrow won’t be derailed by what I ignored today.
 
 ---
 
 ## 🧩 The Raw Inputs: 12-Hour Multi-Source Panel
 
-I aggregated data from multiple APIs and tools into synchronized 12-hour windows.
+I aggregated data from multiple APIs and tools into synchronized 12-hour windows. I didn’t just need OHLCV — I needed enough dimensionality to explain volatility spikes, tail risks, and asymmetric behaviours. That meant pulling in signals from on-chain metrics, market-wide flows, and Solana ecosystem activity.
 
 **Included Streams:**
 
-- OHLCV per token (via Solana DEX APIs)
-- On-chain metrics: `holder_count`, `transfer_count`, `new_token_accounts`
-- Global crypto context: SOL, ETH, BTC prices; DeFi TVL; Solana network tx count; SPL instruction count
+- OHLCV per token (SolanaTracker APIs)
+- On-chain metrics: `holder_count`, `transfer_count`, `new_token_accounts` (CoinGecko API)
+- Global crypto context: SOL, ETH, BTC prices; DeFi TVL; Solana network tx count; SPL instruction count (CoinGecko and Big Query Solana Community Public Dataset)
+- *Social Media Sentiment Datastream not included but was created (LunarCrush API)*
 
 📒 See notebook:  
 [01_EDA_missingness.ipynb](https://github.com/KetchupJL/solana-qrf-interval-forecasting/blob/main/notebooks/EDA/01_EDA_missingness.ipynb)
@@ -39,6 +38,7 @@ I aggregated data from multiple APIs and tools into synchronized 12-hour windows
 ## 🧹 Cleaning the OHLCV Panel
 
 Tokens like `$COLLAT` and `titcoin` were removed due to excessive missingness or late data starts. All data was reindexed to a 12h frequency.
+This wasn't just a practical step, it was a research design choice. Tokens with late listings or erratic gaps could inject bias into quantile estimates, especially in the tails. I chose to cut aggressively, favouring consistency over sample size.
 
 I then clipped each token's history at the first valid OHLCV bar using this logic:
 
@@ -71,7 +71,10 @@ Plot from notebook:
 
 ## 🔄 Imputation Strategy: Linear > Kalman
 
-I initially considered Kalman smoothing and PCA-based methods — but rigorous testing with simulated gaps showed that **linear interpolation** actually outperformed them. This was a surprise as it's widely used as the baseline for imputation comparison, thus I didnt expect its simplicity to provide the lowest error.
+To fill the gaps, I benchmarked multiple methods: Kalman smoothing, PCA, k-NN, forward-fill, and linear interpolation — using simulated missingness and RMSE as the metric.
+
+I initially considered Kalman smoothing and PCA-based methods — but rigorous testing with simulated gaps showed that **linear interpolation** actually outperformed them. This taught me something subtle: when your goal is to model **distributional uncertainty**, overly sophisticated imputation can backfire. Kalman filtering and PCA impose structure that might wash away useful volatility signals. Linear interpolation, though simple, preserved the noise that actually carries meaning in crypto returns.
+
 
 ```python
 # Comparison of imputation RMSE (5% simulated gaps)
@@ -99,9 +102,16 @@ After cleaning:
 - **OHLCV missingness:** 0%  
 - **On-chain features missingness:** reduced and tracked
 
+I transformed a noisy, half-usable time series into a modeling-ready dataset — one where every token had a coherent timeline, every bar had traceable logic, and downstream features could be computed with confidence.
+
+
 Bar chart from audit:
 
 ![Missingness improvement barplot](/assets/images/ohlcv_missingness_barplot.png)
+
+Example OHLCV Imputation for WIF Token:
+
+![Missingness improvement barplot](/assets/images/imputed_check.png)
 
 More visuals and breakdowns in:  
 [02cleaning_ohlcv_data.ipynb](https://github.com/KetchupJL/solana-qrf-interval-forecasting/blob/main/notebooks/Data%20Processing/02cleaning_ohlcv_data.ipynb)
@@ -109,6 +119,8 @@ More visuals and breakdowns in:
 ---
 
 ## Lessons Learned
+
+If I had started modeling too early, I’d have baked in structural bias. Instead, by building a consistent data foundation, I now trust that any prediction error I see belongs to the model — not the data.
 
 - 🔎 **Token timelines matter:** I built a `post_ohlcv_launch` flag per token to avoid spurious early entries.  
 - ⚖️ **Linear interpolation can outperform** complex models in practice — especially when gaps are small.  
