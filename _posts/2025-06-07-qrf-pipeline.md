@@ -15,7 +15,9 @@ tags:
 
 Building a model is only half the battle. In volatile crypto markets, the quality of your dataset defines the ceiling of your forecasting potential.
 
-My aim wasn’t just to build a dataset — it was to construct a research-grade panel that could support **tail-sensitive, quantile-based forecasting**. In this post, I share how I assembled and audited the data foundation for this project: the steps I took to make sure that what I model tomorrow won’t be derailed by what I ignored today.
+My aim wasn’t just to build a dataset — it was to construct a research-grade panel that could support **tail-sensitive, quantile-based forecasting** and provide solid base to **backtest additional trading strategies**. 
+
+So before modelling, I focused on a harder problem: trusting the data. This post walks through how I constructed a clean, 12-hour-resolution panel for 23 mid-cap Solana tokens, merging price, liquidity, and on-chain behaviour - and ensuring every entry is traceable, aligned, and imputation-aware.
 
 ---
 
