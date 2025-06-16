@@ -1,7 +1,7 @@
 ---
 title: "Taming Chaos: How I Built a Clean Multi-Source Dataset for Solana Token Forecasting"
 excerpt: "The story behind cleaning, aligning, and imputing Solana token data for robust quantile forecasting models."
-date: 2025-06-08
+date: 2025-06-17
 author_profile: true
 tags:
   - Solana
