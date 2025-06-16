@@ -143,6 +143,8 @@ Example preview:
 ```python
 df_imputed.head()
 ```
+![df_imputed.tail()](/assets/images/data_tail.png)
+
 ---
 
 ## 🛤️ Coming Up Next...
