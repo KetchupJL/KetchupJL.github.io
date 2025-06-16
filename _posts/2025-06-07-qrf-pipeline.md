@@ -11,9 +11,9 @@ tags:
   - Research Pipeline
 ---
 
-## 🧠 Why This Matters
+## Why This Matters
 
-Forecasting crypto is already tough — but doing so with **distributional forecasts** (like quantile intervals) adds another layer of complexity. These models don’t just predict the return — they predict the range of possible returns, including **tail risks**.
+Forecasting crypto is already tough, but doing so with **distributional forecasts** (like quantile intervals) adds another layer of complexity. The models I'm developing don’t just predict the return — they predict the range of possible returns, including **tail risks**.
 
 That means we need precision. Missing data, unaligned tokens, or careless imputation could destroy volatility structure and bias our models.
 
@@ -31,7 +31,7 @@ I aggregated data from multiple APIs and tools into synchronized 12-hour windows
 - On-chain metrics: `holder_count`, `transfer_count`, `new_token_accounts`
 - Global crypto context: SOL, ETH, BTC prices; DeFi TVL; Solana network tx count; SPL instruction count
 
-🧪 See notebook:  
+📒 See notebook:  
 [01_EDA_missingness.ipynb](https://github.com/KetchupJL/solana-qrf-interval-forecasting/blob/main/notebooks/EDA/01_EDA_missingness.ipynb)
 
 ---
@@ -57,7 +57,7 @@ df = df[df['post_launch']]
 
 ## 🔎 Auditing the Damage: OHLCV Missingness
 
-Before cleaning, **OHLCV columns had ~18% missing values**, due to low-liquidity intervals or indexer delays — not timestamp issues.
+Before cleaning, **OHLCV columns had ~18% missing values**, due to missing data coverage in the Solana Tracker API — not timestamp issues.
 
 This heatmap shows how gaps differ across tokens:
 
@@ -71,7 +71,7 @@ Plot from notebook:
 
 ## 🔄 Imputation Strategy: Linear > Kalman
 
-I initially considered Kalman smoothing and PCA-based methods — but rigorous testing with simulated gaps showed that **linear interpolation** actually outperformed them.
+I initially considered Kalman smoothing and PCA-based methods — but rigorous testing with simulated gaps showed that **linear interpolation** actually outperformed them. This was a surprise as it's widely used as the baseline for imputation comparison, thus I didnt expect its simplicity to provide the lowest error.
 
 ```python
 # Comparison of imputation RMSE (5% simulated gaps)
@@ -81,8 +81,9 @@ methods = {
     'knn': 0.93970,
     'kalman': 0.09185
 }
+```
 
-➡️ **Conclusion:** Linear interpolation + 2-bar forward-fill wins.
+**Conclusion:** Linear interpolation + 2-bar forward-fill wins.
 
 Full benchmarks in notebook:  
 [03OHLCV_cleaning_imputation.ipynb](https://github.com/KetchupJL/solana-qrf-interval-forecasting/blob/main/notebooks/Data%20Processing/03OHLCV_cleaning_imputation.ipynb)
@@ -107,7 +108,7 @@ More visuals and breakdowns in:
 
 ---
 
-## 🧠 Lessons Learned
+## Lessons Learned
 
 - 🔎 **Token timelines matter:** I built a `post_ohlcv_launch` flag per token to avoid spurious early entries.  
 - ⚖️ **Linear interpolation can outperform** complex models in practice — especially when gaps are small.  
@@ -117,7 +118,7 @@ More visuals and breakdowns in:
 
 ## 🧰 The Final Product
 
-The master dataset — now stored as `solana_cleaned_imputed_final.parquet` — includes:
+The master dataset — now stored as `solana_cleaned_imputed_final.parquet` includes:
 
 - Fully cleaned OHLCV  
 - Timestamp-aligned token and market features  
@@ -126,17 +127,17 @@ The master dataset — now stored as `solana_cleaned_imputed_final.parquet` — 
 Example preview:
 
 ```python
-df_imputed[['token', 'timestamp', 'close_usd', 'holder_count']].head()
+df_imputed.head()
 ```
 ---
 
 ## 🛤️ Coming Up Next...
 
-In the next post, I’ll cover how I transform this clean dataset into a **feature matrix for forecasting**:
+In the next post, I’ll cover how I conducted exploratory analysis and some insights into the On-Chain lives of the tokens:
 
-- Momentum, volatility, liquidity, and on-chain dynamics  
-- 72h target variable construction  
-- Handling `shift()`, leak prevention, and realistic forecasting frames
+- Return Analysis and Correlation Reduction Analysis
+- Interval Calibration and CQR/QRF Rolling Calibration
+- Insights into Feature Engineering and Model Development
 
 ---
 
