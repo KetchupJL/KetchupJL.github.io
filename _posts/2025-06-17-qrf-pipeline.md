@@ -1,14 +1,14 @@
 ---
-title: "Exploring Chaos: A Quant’s Take on EDA for 72-Hour Interval Forecasts of Solana Mid-Cap Tokens"
-excerpt: "."
+title: "Taming Chaos: How I Built a Clean Multi-Source Dataset for Solana Token Forecasting"
+excerpt: "The story behind cleaning, aligning, and imputing Solana token data for robust quantile forecasting models."
 date: 2025-06-17
 author_profile: true
 tags:
   - Solana
   - Crypto Forecasting
   - Quantile Regression
-  - EDA
-  - Algorithmic Trading
+  - Data Cleaning
+  - Research Pipeline
 header:
   overlay_filter: 0.4  # Optional: darkens the image to improve text readability
   overlay_image: /assets/images/wave.jpg
@@ -18,145 +18,155 @@ header:
 
 ---
 
-## Trading Assumptions at Inception
+## Research Under Uncertainty: Why This Work Matters
 
-Every systematic strategy starts with working hypotheses. Mine were:
+Building a model is only half the battle. In volatile crypto markets, the quality of your dataset defines the ceiling of your forecasting potential.
 
-1. **Data Completeness:** Sporadic gaps can be patched with simple interpolation.  
-2. **Return Normality:** ±σ bands are sufficient to quantify tail risk.  
-3. **Feature Orthogonality:** Market, on-chain, and sentiment signals bring unique α.  
-4. **Stationarity:** Rolling windows capture “steady” dynamics—no regime breaks.
+My aim wasn’t just to build a dataset — it was to construct a research-grade panel that could support **tail-sensitive, quantile-based forecasting** and provide solid base to **backtest additional trading strategies**. 
 
-In [Part I: Taming Data Missingness](https://ketchupjl.github.io/qrf-pipeline/) we stress-tested (1), dropped two ill-behaved tokens, and locked in a linear+2-bar ffill imputation. That exercise validated our pipeline plumbing—but the real market test lies ahead.
+So before modelling, I focused on a harder problem: trusting the data. This post walks through how I constructed a clean, 12-hour-resolution panel for 23 mid-cap Solana tokens, merging price, liquidity, and on-chain behaviour - and ensuring every entry is traceable, aligned, and imputation-aware.
 
 ---
 
-## Hypothesis A: Returns Are Gaussian
+## 🧩 The Raw Inputs: 12-Hour Multi-Source Panel
 
-> **Why it matters:** Parametric VaR and Gaussian interval forecasts hinge on normality. If returns aren’t bell-shaped, you’re either too porous or too conservative on risk.
+I aggregated data from multiple APIs and tools into synchronized 12-hour windows. I didn’t just need OHLCV — I needed enough dimensionality to explain volatility spikes, tail risks, and asymmetric behaviours. That meant pulling in signals from on-chain metrics, market-wide flows, and Solana ecosystem activity.
 
-**Methodology:**  
-- Overlayed 12 h & 72 h log-return histograms with Gaussian PDFs.  
-- Computed sample skewness (γ) and excess kurtosis (κ).  
-- Flagged all |return| > 3σ events.
+**Included Streams:**
 
-**Findings:**  
-- γ ≈ +0.7: pronounced positive skew.  
-- κ ≈ 27: “infinite”-looking tails.  
-- 3σ moves every ∼25 bars—far more frequent than the ∼1-in-370 of a true normal.
+- OHLCV per token (SolanaTracker APIs)
+- On-chain metrics: `holder_count`, `transfer_count`, `new_token_accounts` (CoinGecko API)
+- Global crypto context: SOL, ETH, BTC prices; DeFi TVL; Solana network tx count; SPL instruction count (CoinGecko and Big Query Solana Community Public Dataset)
+- *Social Media Sentiment Datastream not included but was created (LunarCrush API)*
 
-> **Algo-Edge:** Naïve σ-bands under-cover tail losses by ≈8–10 pp. Any live trading system that uses Gaussian VaR will be caught flat-footed on market spikes.
-
-**Next Steps:**  
-- Drop parametric intervals.  
-- Adopt _direct_ quantile estimation:  
-  - Conformalized Quantile Regression (CQR)  
-  - Quantile Regression Forests (QRF)
+📒 See notebook:  
+[01_EDA_missingness.ipynb](https://github.com/KetchupJL/solana-qrf-interval-forecasting/blob/main/notebooks/EDA/01_EDA_missingness.ipynb)
 
 ---
 
-## Hypothesis B: Volatility Is Flat Within Blocks
+## 🧹 Cleaning the OHLCV Panel
 
-> **Why it matters:** Many backtests assume constant σ over the training window. In reality, vol clusters—if you ignore that, your model will overfit calm periods and implode during storms.
+Tokens like `$COLLAT` and `titcoin` were removed due to excessive missingness or late data starts. All data was reindexed to a 12h frequency.
+This wasn't just a practical step, it was a research design choice. Tokens with late listings or erratic gaps could inject bias into quantile estimates, especially in the tails. I chose to cut aggressively, favouring consistency over sample size.
 
-**Methodology:**  
-1. Calculated ACF of returns vs. |returns| up to lag 50.  
-2. Tracked realized volatility (sqrt of 36 h rolling variance) across time.  
-3. Tagged volatility “spikes” when vol > µ_vol + 2σ_vol.
+I then clipped each token's history at the first valid OHLCV bar using this logic:
 
-**Findings:**  
-- Returns: no serial correlation (model-friendly).  
-- |Returns|: significant ACF up to lag 20 → persistent clustering.  
-- Two regime shifts: late April drop and early May rally both saw vol jump > 3× baseline.
+```python
+# Pseudocode: clip token history post-launch
+token_start = df[~df[ohlcv_cols].isnull().any(axis=1)].groupby('token')['timestamp'].min()
+df['post_launch'] = df.apply(lambda r: r['timestamp'] >= token_start.get(r['token'], r['timestamp']), axis=1)
+df = df[df['post_launch']]
+```
+---
 
-> **Algo-Edge:** A static‐σ assumption is a recipe for blown risk budgets.  
-
-**Next Steps:**  
-- Engineer features:  
-  - Lagged realized vol (36 h, 72 h)  
-  - Volatility regime flag (binary)  
-- Use rolling‐window CV that spans both low- and high-vol regimes to avoid look-ahead bias.
+📒 See full notebook:  
+[01data_processing.ipynb](https://github.com/KetchupJL/solana-qrf-interval-forecasting/blob/main/notebooks/Data%20Processing/01data_processing.ipynb)
 
 ---
 
-## Hypothesis C: Features Are Independent α Sources
+## 🔎 Auditing the Damage: OHLCV Missingness
 
+Before cleaning, **OHLCV columns had ~18% missing values**, due to missing data coverage in the Solana Tracker API — not timestamp issues.
 
-> **Why it matters:** Perfectly correlated inputs waste model capacity and obscure true drivers of tail risk.
+This heatmap shows how gaps differ across tokens:
 
-**Methodology:**  
-- Computed Pearson & Spearman correlation matrices among 18 engineered features (price, volume, RSI, ATR, on-chain metrics, social counts).  
-- Isolated pairs with |r| > 0.85.
+![OHLCV missingness heatmap](/assets/images/ohlcv_missingness_heatmap.png)  
+*Green = present, Red = missing*
 
-**Findings:**  
-- token_price_usd vs. token_volume_usd: r ≈ 0.999  
-- SOL_price_usd vs. DeFi_TVL_usd: r ≈ 0.94  
-- BTC, ETH & TVL form a tight triad (r > 0.9)
-
-> **Algo-Edge:** Tree-based models will waste split capacity on redundant features, inflating variance and lengthening inference time.
-
-**Next Steps:**  
-- Prune or combine collinear pairs:  
-  - Keep log(price) and drop raw volume or vice versa.  
-  - Create composite “Market Index” from BTC/ETH/TVL via PCA.  
-- Regularize QRF by limiting max_features and employing feature bagging.
+Plot from notebook:  
+[01_EDA_missingness.ipynb](https://github.com/KetchupJL/solana-qrf-interval-forecasting/blob/main/notebooks/EDA/01_EDA_missingness.ipynb)
 
 ---
 
-## Hypothesis D: Nominal σ-Bands Hit Coverage Targets
+## 🔄 Imputation Strategy: Linear > Kalman
+
+To fill the gaps, I benchmarked multiple methods: Kalman smoothing, PCA, k-NN, forward-fill, and linear interpolation — using simulated missingness and RMSE as the metric.
+
+I initially considered Kalman smoothing and PCA-based methods — but rigorous testing with simulated gaps showed that **linear interpolation** actually outperformed them. This taught me something subtle: when your goal is to model **distributional uncertainty**, overly sophisticated imputation can backfire. Kalman filtering and PCA impose structure that might wash away useful volatility signals. Linear interpolation, though simple, preserved the noise that actually carries meaning in crypto returns.
 
 
-> **Why it matters:** Traders set stop-loss and margin thresholds based on expected interval coverage. Under-coverage means frequent stop-outs.
-
-**Methodology:**  
-- Computed empirical coverage of ±1.28σ (80 %) and ±1.645σ (90 %) bands on out-of-sample 12 h returns.  
-- Plotted nominal vs. actual coverage curves.
-
-**Findings:**  
-- 80 % band covers only ∼72 %  
-- 90 % band covers only ∼82 %
-
-> **Algo-Edge:** Your risk targets are systematically missed—capital use is suboptimal, and tail events are under-appreciated.
-
-**Next Steps:**  
-- Benchmark conformal calibration methods:  
-  - Block-bootstrap intervals  
-  - Split-conformal QR  
-  - Leverage QRF’s native quantile outputs for sharper, data-driven intervals.
-
+```python
+# Comparison of imputation RMSE (5% simulated gaps)
+methods = {
+    'ffill_lim2': 0.09185,
+    'linear_interp': 0.06042,
+    'knn': 0.93970,
+    'kalman': 0.09185
+}
 ```
 
-## From Diagnostics to Quant Pipeline
+**Conclusion:** Linear interpolation + 2-bar forward-fill wins.
 
-| Hypothesis Tested                 | Action Item                                                                  |
-|-----------------------------------|------------------------------------------------------------------------------|
-| Gaussian returns                  | Switch to CQR/QRF for direct quantile estimation                             |
-| Flat volatility                   | Add vol-lag, regime flags; CV across mixed regimes                           |
-| Feature orthogonality             | Prune/combine collinear features; consider composite indices or PCA          |
-| Nominal σ-band calibration        | Integrate conformal/block-bootstrap calibration to guarantee coverage        |
-
-With our assumptions rigorously vetted and features battle-tested, it’s time to build the trading engine—one that respects fat tails, adapts to volatility storms, and leverages clean, orthogonal signals.
+Full benchmarks in notebook:  
+[03OHLCV_cleaning_imputation.ipynb](https://github.com/KetchupJL/solana-qrf-interval-forecasting/blob/main/notebooks/Data%20Processing/03OHLCV_cleaning_imputation.ipynb)
 
 ---
 
-## What’s Next
+## 📊 Audit Results
 
-In **Part III**, we will:
+After cleaning:
 
-1. **Fit Linear Quantile Regression** at τ = 0.10, 0.50, 0.90  
-2. **Construct LightGBM** mean forecasts + residual-bootstrap intervals  
-3. **Train Quantile Regression Forests** (500 trees, hyper-tuned)  
-4. **Benchmark** via pinball loss, empirical coverage, and interval width  
+- **Rows dropped:** 22.36%  
+- **Final rows:** 6,464  
+- **OHLCV missingness:** 0%  
+- **On-chain features missingness:** reduced and tracked
 
-Can we tame chaos and harvest alpha? Stay tuned for the code, live results, and backtest analysis.
+I transformed a noisy, half-usable time series into a modeling-ready dataset — one where every token had a coherent timeline, every bar had traceable logic, and downstream features could be computed with confidence.
 
+
+Bar chart from audit:
+
+![Missingness improvement barplot](/assets/images/ohlcv_missingness_barplot.png)
+
+Example OHLCV Imputation for WIF Token:
+
+![Missingness improvement barplot](/assets/images/imputed_check.png)
+
+More visuals and breakdowns in:  
+[02cleaning_ohlcv_data.ipynb](https://github.com/KetchupJL/solana-qrf-interval-forecasting/blob/main/notebooks/Data%20Processing/02cleaning_ohlcv_data.ipynb)
+
+---
+
+## Lessons Learned
+
+If I had started modeling too early, I’d have baked in structural bias. Instead, by building a consistent data foundation, I now trust that any prediction error I see belongs to the model — not the data.
+
+- 🔎 **Token timelines matter:** I built a `post_ohlcv_launch` flag per token to avoid spurious early entries.  
+- ⚖️ **Linear interpolation can outperform** complex models in practice — especially when gaps are small.  
+- 📉 **Removing ~22% of rows** may feel painful, but it's necessary to preserve modeling integrity.
+
+---
+
+## 🧰 The Final Product
+
+The master dataset — now stored as `solana_cleaned_imputed_final.parquet` includes:
+
+- Fully cleaned OHLCV  
+- Timestamp-aligned token and market features  
+- Flags for imputed rows, clipped starts, and modeling-ready alignment
+
+Example preview:
+
+```python
+df_imputed.head()
+```
+![df_imputed](/assets/images/data_tail.png)
+
+---
+
+## 🛤️ Coming Up Next...
+
+In the next post, I’ll cover how I conducted exploratory analysis and some insights into the On-Chain lives of the tokens:
+
+- Return Analysis and Correlation Reduction Analysis
+- Interval Calibration and CQR/QRF Rolling Calibration
+- Insights into Feature Engineering and Model Development
 
 ---
 
 ## 🔗 Notebooks Referenced
 
-*Referenced Notebooks:*  
-- `01_EDA_missingness.ipynb` (Part I)  
-- `02_EDA_return_analysis.ipynb`  
-- `03_EDA_corr_redu_analysis.ipynb`  
-- `04_EDA_interval_calib.ipynb`  
+- [01_EDA_missingness.ipynb](https://github.com/KetchupJL/solana-qrf-interval-forecasting/blob/main/notebooks/EDA/01_EDA_missingness.ipynb)  
+- [01data_processing.ipynb](https://github.com/KetchupJL/solana-qrf-interval-forecasting/blob/main/notebooks/Data%20Processing/01data_processing.ipynb)  
+- [02cleaning_ohlcv_data.ipynb](https://github.com/KetchupJL/solana-qrf-interval-forecasting/blob/main/notebooks/Data%20Processing/02cleaning_ohlcv_data.ipynb)  
+- [03OHLCV_cleaning_imputation.ipynb](https://github.com/KetchupJL/solana-qrf-interval-forecasting/blob/main/notebooks/Data%20Processing/03OHLCV_cleaning_imputation.ipynb)
