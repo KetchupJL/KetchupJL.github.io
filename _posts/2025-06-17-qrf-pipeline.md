@@ -9,6 +9,7 @@ tags:
   - Quantile Regression
   - Data Cleaning
   - Research Pipeline
+show_overlay_excerpt: true
 header:
   image: /assets/images/wave.jpg
 
