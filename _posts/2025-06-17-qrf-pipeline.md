@@ -9,6 +9,9 @@ tags:
   - Quantile Regression
   - Data Cleaning
   - Research Pipeline
+header:
+  image: /assets/images/wave.jpg
+
 ---
 
 ## Research Under Uncertainty: Why This Work Matters
@@ -143,7 +146,7 @@ Example preview:
 ```python
 df_imputed.head()
 ```
-![df_imputed.tail()](/assets/images/data_tail.png)
+![df_imputed](/assets/images/data_tail.png)
 
 ---
 
