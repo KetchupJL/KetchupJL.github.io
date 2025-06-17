@@ -12,8 +12,7 @@ tags:
 header:
   image: /assets/images/wave.jpg
   overlay_filter: 0.4  # Optional: darkens the image to improve text readability
-  caption: "Solana DeFi token returns require structure before prediction."
-  overlay_caption: "Taming Chaos"
+  overlay_image: "Structuring chaos: the first step in crypto forecasting"
   actions:
     - label: "View Project on GitHub"
       url: "https://github.com/KetchupJL/solana-qrf-interval-forecasting"
