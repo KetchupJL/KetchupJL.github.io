@@ -2,7 +2,6 @@
 title: "Backtesting Low-Cap Strategies: From EDA to Execution"
 excerpt: "Using alpha token datasets to explore strategies, stress-test exits, and simulate performance before going live."
 date: 2025-09-21
-categories: [trading, crypto, solana]
 tags: [backtesting, eda, alpha, strategy, simulation]
 header:
   teaser: /assets/img/teasers/backtest-teaser.png
@@ -105,6 +104,8 @@ To avoid hindsight bias and overfitting, I structured the search as a **systemat
 2. **Timeouts act as regime control.** They truncate long-tail losses and reduce variance, especially in noisy liquidity conditions.
 3. **Synergies dominate.** Entry and exit rules interact; the best-performing strats were *combinations*, not individual parameter choices.
 
+
+
 ---
 
 ## Trailing Exits
@@ -115,6 +116,8 @@ Trailing mechanisms provided an additional refinement:
 * **Partial TP + trailing remainder:** locks partial profit, while leaving exposure to large runs.
 
 While not always optimal as standalone exits, trailing rules smoothed equity curves and reduced variance when layered on top of the +50/–25/6m base strategy.
+
+![Profit vs Win-rate, with TSL Toggle](/assets/images/bubble.png)
 
 ---
 
@@ -132,6 +135,11 @@ The strategy currently deployed in the Low-Cap Solana Bot is:
 
 This configuration is not static. I re-run the grid search and re-validate parameters every few days, ensuring the system adapts as liquidity conditions and volatility regimes change.
 
+![Win Rate Heatmap Across TP/SL Configurations](/assets/images/heatmap-config.png)
+
+Exhaustive backtest of exit strategies across hundreds of millions of parameter combinations. Higher win rates concentrate around tighter take-profit and stop-loss bands, but with limited average returns.
+
+![Mean PnL Heatmap Across TP/SL Configurations](/assets/images/heatmap-pnl.png)
 ---
 
 ## Why This Works
