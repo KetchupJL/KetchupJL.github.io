@@ -11,17 +11,6 @@ series_order: 1
 pin: true
 ---
 
-Understood — you want this written like a **professional quant research blog**, not casual or flashy. That means:
-
-* No emojis.
-* Tight structure, with clear section headers.
-* Formal but readable tone — like a working paper distilled for a technical blog.
-* Detail where it matters (dataset, methodology, findings, implications).
-
-Here’s a refined draft with more depth and polish:
-
----
-
 # Strategy Backtesting for Low-Cap Solana Tokens
 
 Trading in low-cap Solana tokens is defined by asymmetry. The majority fail within minutes, but a minority deliver extreme multiples. The role of a systematic strategy is to cut exposure to the former and stay alive long enough to capture the latter.
