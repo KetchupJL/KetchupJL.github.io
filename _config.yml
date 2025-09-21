@@ -18,7 +18,7 @@ locale                   : "en-GB"
 rtl                      : # true, false (default) # turns direction of the page into right to left for RTL languages
 title                    : "Blog/Portfolio"
 title_separator          : "|"
-subtitle                 : "Algorithmic Trading • Machine Learning • Blockchain Analytics"
+subtitle                 : "Algorithmic Trading • Machine Learning • Quant Analysis"
 name                     : "James Lewis"
 description              : "Portfolio and research hub for James Lewis — MSc Data Science & Statistics | Crypto Quant | Builder of trading bots and predictive models."
 url                      : "https://ketchupjl.github.io/"

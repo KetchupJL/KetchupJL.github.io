@@ -22,7 +22,7 @@ For opportunities, questions, or direct contact, you can reach me at:
 
 ## 🔗 Elsewhere
 
-I’m active on the platforms below — always open to talk about research, quant finance, or cool ML projects:
+I’m active on the platforms below — always open to talk about algo trading, quant finance, or cool ML projects:
 
 - 💼 [LinkedIn](https://linkedin.com/in/james-lewis3/)
 - 💻 [GitHub](https://github.com/KetchupJL)
