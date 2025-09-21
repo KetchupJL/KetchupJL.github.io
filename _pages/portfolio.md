@@ -7,7 +7,7 @@ classes: wide
 ---
 
 
-# 🚀 Projects & Research
+# Projects & Research
 
 A collection of applied and technical work, from **algorithmic trading systems** and **on-chain analytics** to **academic data science research**.
 

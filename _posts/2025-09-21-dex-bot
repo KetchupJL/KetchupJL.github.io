@@ -1,0 +1,11 @@
+---
+title: "Inside the Low-Cap Alpha Signal Bot: Architecture, Logic & Design"
+excerpt: "Breaking down the architecture of a production-grade Solana trading system: queues, filters, strategies, and live performance."
+date: 2025-09-21
+categories: [trading, crypto, solana]
+tags: [architecture, design, latency, alpha, dexscreener, helius]
+header:
+  teaser: /assets/img/teasers/architecture-teaser.png
+series: "Low-Cap Solana Bot"
+series_order: 2
+---
