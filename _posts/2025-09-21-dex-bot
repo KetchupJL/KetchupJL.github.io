@@ -9,3 +9,136 @@ header:
 series: "Low-Cap Solana Bot"
 series_order: 2
 ---
+
+# Engineering a Curated Solana Signal Into a Live, Low-Latency Trading System
+
+This post breaks down how I engineered a discrete, curated on-chain signal into a production trading system with paper and live modes, strong safety guardrails, and a tight research/ops feedback loop. It’s written for traders, quants, and engineers.
+
+Nothing here is financial advice. Always test in simulation first.
+
+---
+
+## Why a Discrete, Curated Signal Works
+
+* **Binary and Observable.** The system keys off a discrete “go/no-go” event tied to a token’s lifecycle. It functions as a high-intent, quality-screened trigger rather than a raw firehose of noise.
+* **Flow-Compatible.** The trigger is validated against real-time flow gates (5-minute volume, buy/sell balance, minimum number of buys) to isolate genuine participation.
+* **Execution-Aware Edge.** In illiquid microcap regimes, slippage, impact, and exit discipline decide profitability. A curated trigger combined with flow/liquidity filters and robust execution is a pragmatic foundation.
+
+---
+
+## From Prototype → Rebuild → Production
+
+* **Prototype.** Initial validation of the signal, iterative testing of entry/exit rules, and measurement of where slippage and latency had the most impact.
+* **Rebuild.** Migration to TypeScript with modular boundaries: ingest, filters, scheduler, trading engines, metrics, reporting. Emphasis on rate-limit management, RPC failover, and explainable strategies.
+* **Production.** Fully deployed with observability, periodic summaries, and a feedback loop (paper → reports → notebooks). Recent live periods averaged \~73% win rate with positive PnL distributions.
+
+---
+
+## Core Architecture
+
+High-level system flow:
+
+
+Ingest → Qualify → Detect → Notify → Trade → Observe
+
+
+* **Ingest.** Pull newest tokens and snapshots with pacing/backoff under strict rate limits.
+* **Qualify.** Apply hard gates: minimum market cap, 5-minute volume, buy/sell ratio, minimum buys, optional holder/latency checks.
+* **Detect.** Confirm the curated signal within a global RPM budget.
+* **Notify.** Push alerts, trade lifecycle updates, and performance summaries to Discord.
+* **Trade.** Strategy presets (TP, SL, TSL, timeout). Paper mode for iteration, live mode for execution with guardrails.
+* **Observe.** Prometheus metrics on `/metrics`, JSONL/CSV logs, reporting scripts for daily and periodic summaries.
+
+---
+
+## Concurrency & Latency Design
+
+* **Budgets and Queues.** Global RPM limiter with bucketed schedulers; prevents bursts from starving critical checks.
+* **Backoff and Pacing.** Exponential backoff on 429/5xx, endpoint-specific pacing to maintain stable SLOs.
+* **RPC Failover.** Pool of authenticated RPC endpoints; automatic rotation and re-admission after recovery.
+* **Priority Fees and Tips.** Dynamic estimates (microLamports/CU) with caps; randomized small tips to increase inclusion probability.
+* **Jitter Protection.** Exit rules require consecutive confirmations; sell cooldowns prevent churn in thin liquidity.
+* **Latency Target.** <90 seconds end-to-end under normal load, including detection, decision, and execution.
+
+---
+
+## Strategies & Filters
+
+* **Strategy Presets.**
+
+  * *Baseline:* balanced TP/SL with modest timeout.
+  * *Runners:* higher TP tolerance with sharper time discipline.
+  * *Fast Scalp:* quick TP and timeout for short spikes.
+  * *Trailing Drawdown:* trailing SL exits instead of fixed TP.
+
+* **Entry Filters.**
+
+  * Liquidity: minimum market cap and 5-minute volume.
+  * Demand: buy/sell ratio, minimum number of buys.
+  * Optional: holders and latency cap for staleness control.
+
+* **Risk Gates.** Optional RSI/EMA bias; simple rug-risk heuristics.
+
+**Design Principle:** Simple rules coupled with flow/liquidity gates outperform complex models in non-stationary, high-slippage regimes.
+
+---
+
+## Live Execution Layer
+
+* **Signal → Buy.** Pre-trade quote with price-impact check → slippage-bounded transaction → finalize with compute budget, priority fee estimate, small tip → sign, broadcast, rebroadcast until confirmed. Entry price derived from on-chain balances.
+* **Position Management.** Fixed-cadence polling; retry/backoff quotes; exit decisions with confirmation ticks; persistence of positions for safe restart.
+* **Logging.** Structured logs (`live_trades.jsonl`, CSV) for reporting and research.
+
+---
+
+## Deployment & Operations
+
+* **Process Manager.** PM2 or Docker for resilience; `.env` configuration with secrets excluded.
+* **Wallet & Fees.** Private key or keypair file; dynamic fee estimation with conservative caps.
+* **Guardrails.** Slippage and price-impact caps, partial TP, trailing logic for volatile moves.
+* **Observability.** Metrics at `/metrics`, logs to JSONL/CSV, Discord summaries every 4h/12h/daily.
+
+---
+
+## Research & Backtesting Workflow
+
+* **Data Capture.** Paper trades to JSONL/CSV; live trades similarly logged. Optional high-frequency datasets for post-trigger analysis.
+* **Reporting.** Automated summaries via `npm run report:paper` and Discord posts.
+* **Notebooks.** Parameter sweeps and HF analysis for continuous strategy refinement.
+* **Metrics Tracked.** Win rate, profit factor, expectancy, time-in-trade, slippage vs. quotes, confirmation latency.
+
+---
+
+## Performance & Lessons
+
+* **Results.** Recent deployment averaged \~73% win rate with promising cumulative PnL. See Figure 1 for live cumulative PnL curve.
+* **Key Drivers.**
+
+  * Execution reliability (priority fees, tips, rebroadcast) reduced stuck trades.
+  * Debounced exits + cooldowns reduced slippage and churn in illiquid environments.
+  * Budgeted schedulers protected API health and reduced detection latency.
+  * Simple, explainable strategies enabled faster iteration and avoided overfitting.
+
+![Cumulative Live PnL (SOL](/assets/images/live-pnl.png)
+
+**Figure 1 — Cumulative Live PnL (SOL)**
+Cumulative realized returns across recent live trades. The equity curve reflects both disciplined exits and the benefit of reliable execution under volatile conditions.
+
+---
+
+## Future Improvements
+
+* Adaptive entry filters: thresholds adjusted dynamically with volatility and market conditions.
+* Smarter risk heuristics: stronger rug/ownership filters without exposing alpha.
+* Multi-wallet execution: staggered entries to reduce footprint and increase inclusion.
+* Execution analytics: deeper comparison of quoted vs. realized fills to tune caps dynamically.
+
+---
+
+## Wrap Up
+
+The edge here is not a single secret signal, but the **sum of disciplined engineering choices**: a discrete catalyst, conservative flow/liquidity gating, simple exits, and serious attention to reliability. In volatile microcap markets, engineering quality often matters more than clever models.
+
+Start in paper mode, measure everything, and avoid overfitting. Build the simple system that survives volatility and slippage before adding complexity.
+
+---
