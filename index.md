@@ -66,14 +66,6 @@ This site is my research portfolio and personal knowledge hub. You’ll find:
 
 ## 🧰 Tools I Work With
 
-Perfect — let’s build you a **refreshed “🧰 Tools I Work With”** block that reflects **both your quant/data science toolkit** and your **trading bot / Solana stack**.
-
-Here’s an updated version, combining everything you actively use:
-
----
-
-## 🧰 Tools I Work With
-
 <p align="center" style="max-width: 1000px; margin: auto; padding: 0 1rem;">  
   <!-- Core Languages & Data Science -->  
   <img src="https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white"/>  
