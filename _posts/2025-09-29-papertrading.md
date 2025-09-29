@@ -27,31 +27,31 @@ gallery:
     alt: "Session summary table by variant"
     title: "Figure 1 — Session × Variant summary (win rate, returns, PnL, MFE/MAE, median hold)"
   - url: /assets/images/session-results/winrate_by_session_variant.png
-    image_path: /assets/images/session-results/winrate_by_session_variant_th.png
+    image_path: /assets/images/session-results/winrate_by_session_variant.png
     alt: "Win rate by session and variant"
     title: "Figure 2 — Win rate (%), dashed line at 50%"
   - url: /assets/images/session-results/totalpnl_by_session_variant.png
-    image_path: /assets/images/session-results/totalpnl_by_session_variant_th.png
+    image_path: /assets/images/session-results/totalpnl_by_session_variant.png
     alt: "Total PnL by session and variant"
     title: "Figure 3 — Total PnL (SOL) by session and variant"
   - url: /assets/images/session-results/mean_return_by_session_variant.png
-    image_path: /assets/images/session-results/mean_return_by_session_variant_th.png
+    image_path: /assets/images/session-results/mean_return_by_session_variant.png
     alt: "Mean return by session and variant"
     title: "Figure 4 — Mean return (%) by session and variant"
   - url: /assets/images/session-results/return_boxplots_by_session_variant.png
-    image_path: /assets/images/session-results/return_boxplots_by_session_variant_th.png
+    image_path: /assets/images/session-results/return_boxplots_by_session_variant.png
     alt: "Return distribution boxplots"
     title: "Figure 5 — Return distributions with medians and means"
   - url: /assets/images/session-results/cum_pnl_by_session_variant.png
-    image_path: /assets/images/session-results/cum_pnl_by_session_variant_th.png
+    image_path: /assets/images/session-results/cum_pnl_by_session_variant.png
     alt: "Cumulative PnL over time"
     title: "Figure 6 — Cumulative PnL over time, faceted by session"
   - url: /assets/images/session-results/exit_reason_counts.png
-    image_path: /assets/images/session-results/exit_reason_counts_th.png
+    image_path: /assets/images/session-results/exit_reason_counts.png
     alt: "Exit reason counts"
     title: "Figure 7 — Exit reason mix (TP, SL, timeout) by session and variant"
   - url: /assets/images/session-results/live_cum_pnl.png
-    image_path: /assets/images/session-results/live_cum_pnl_th.png
+    image_path: /assets/images/session-results/live_cum_pnl.png
     alt: "Live cumulative PnL"
     title: "Figure 8 — Live cumulative PnL (reference)"
 ---
