@@ -5,10 +5,9 @@ excerpt: "207 paper trades across 103 tokens with session-specific variants (pri
 description: "Evaluation of session-specific strategies for a Solana low-cap trading system, including win rate, PnL, MFE/MAE efficiency, and robustness checks."
 date: 2025-09-29
 last_modified_at: 2025-09-29
-categories: [trading, crypto, solana]
 tags: [sessions, backtesting, mfe, mae, expectancy, monte-carlo, shrinkage, survival, microstructure]
 header:
-  teaser: /assets/img/teasers/session-results-teaser.png
+  teaser: /assets/images/session-results/session-teaser.png
   overlay_color: "#111"
   overlay_filter: "0.2"
 classes: wide
@@ -20,7 +19,43 @@ related: true
 series: "Low-Cap Solana Bot"
 series_order: 3
 pin: false
+
+# GALLERY
+gallery:
+  - url: /assets/img/session-results/session-teaser.png
+    image_path: /assets/img/session-results/session-teaser.png
+    alt: "Session summary table by variant"
+    title: "Figure 1 — Session × Variant summary (win rate, returns, PnL, MFE/MAE, median hold)"
+  - url: /assets/img/session-results/winrate_by_session_variant.png
+    image_path: /assets/img/session-results/winrate_by_session_variant_th.png
+    alt: "Win rate by session and variant"
+    title: "Figure 2 — Win rate (%), dashed line at 50%"
+  - url: /assets/img/session-results/totalpnl_by_session_variant.png
+    image_path: /assets/img/session-results/totalpnl_by_session_variant_th.png
+    alt: "Total PnL by session and variant"
+    title: "Figure 3 — Total PnL (SOL) by session and variant"
+  - url: /assets/img/session-results/mean_return_by_session_variant.png
+    image_path: /assets/img/session-results/mean_return_by_session_variant_th.png
+    alt: "Mean return by session and variant"
+    title: "Figure 4 — Mean return (%) by session and variant"
+  - url: /assets/img/session-results/return_boxplots_by_session_variant.png
+    image_path: /assets/img/session-results/return_boxplots_by_session_variant_th.png
+    alt: "Return distribution boxplots"
+    title: "Figure 5 — Return distributions with medians and means"
+  - url: /assets/img/session-results/cum_pnl_by_session_variant.png
+    image_path: /assets/img/session-results/cum_pnl_by_session_variant_th.png
+    alt: "Cumulative PnL over time"
+    title: "Figure 6 — Cumulative PnL over time, faceted by session"
+  - url: /assets/img/session-results/exit_reason_counts.png
+    image_path: /assets/img/session-results/exit_reason_counts_th.png
+    alt: "Exit reason counts"
+    title: "Figure 7 — Exit reason mix (TP, SL, timeout) by session and variant"
+  - url: /assets/img/session-results/live_cum_pnl.png
+    image_path: /assets/img/session-results/live_cum_pnl_th.png
+    alt: "Live cumulative PnL"
+    title: "Figure 8 — Live cumulative PnL (reference)"
 ---
+
 
 
 # Session-Aware Strategy Stack: First Results from 3.5 Days of Paper Trading
@@ -51,7 +86,7 @@ Liquidity and participation are poor in this window and it shows up in the distr
 
 **Interpretation.** Entries frequently stagnate and then time out; adverse excursions outweigh favourable ones (MAE ≫ MFE). Under current filters this session is **structurally unprofitable** and will remain research-only.
 
-*(Figures: win-rate bars with 50% reference, exit-reason stacks, return boxplots.)*
+
 
 ---
 
@@ -68,7 +103,6 @@ Participation improves and so do outcomes, but the edge is still thin and noisy.
 
 **Interpretation.** The **pnl** variant converts opportunity most efficiently in this window (highest MFE with comparable MAE), but dispersion is high. If enabled live, this session gets conservative sizing and tighter guardrails.
 
-*(Figures: total-PnL bars, cumulative-PnL lines, return boxplots.)*
 
 ---
 
@@ -86,7 +120,21 @@ Depth and genuine buy-side flow are consistently present; take-profit hits are c
 
 **Interpretation.** **16–24** is the production window. The **score** variant shows the best combination of win rate, positive median (not just mean), and “efficiency” (high MFE with relatively shallow MAE). The **pnl** variant offers breadth (35 trades) with solid expectancy; it’s a good secondary preset to carry alongside **score**.
 
-*(Figures: results table, cumulative-PnL lines, exit-reason stacks.)*
+## Figures and tables
+
+Figure 1 gives the full session × variant summary table (win rate, returns, PnL, MFE/MAE, median hold).
+
+Figures 2–4 break out win rate, total PnL, and mean returns by session and variant.
+
+Figure 5 shows return distributions; Figure 6 tracks cumulative PnL over time.
+
+Figure 7 highlights the exit-reason mix, which explains why 00–08 is timeout-heavy while 16–24 sees frequent TP hits.
+
+Figure 8 is the live cumulative PnL curve for context.
+Click any thumbnail to view full-size; captions note the key takeaway so you can scan quickly and then dig into the sections above for interpretation.
+
+{% include gallery id="gallery" caption="All figures for this study. Click any thumbnail to open; use arrows to navigate. Captions summarise the takeaway for each chart." %}
+
 
 ---
 
