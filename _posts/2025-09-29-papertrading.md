@@ -9,7 +9,8 @@ tags: [sessions, backtesting, mfe, mae, expectancy, monte-carlo, shrinkage, surv
 header:
   teaser: /assets/images/session-results/session-teaser.png
   overlay_color: "#111"
-  overlay_filter: "0.2"
+  overlay_filter: 0.4  # Optional: darkens the image to improve text readability
+  overlay_image: /assets/images/session-results/background.png
 classes: wide
 author_profile: true
 read_time: true
