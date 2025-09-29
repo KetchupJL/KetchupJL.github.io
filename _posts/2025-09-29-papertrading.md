@@ -172,8 +172,6 @@ Results
 I’ve also run Monte Carlo resampling, small-N shrinkage, MFE/MAE efficiency, and time-to-exit survival to sanity-check the rankings. I’ll share the tables and curves in a follow-up.
 
 Full write-up and charts on the blog:
-Backtesting strategies on low-cap tokens (link)
-Engineering the live system (link)
 Session-aware results (this post)
 
 If you’re working on algorithmic trading, quant research, or Solana microstructure, happy to connect.
