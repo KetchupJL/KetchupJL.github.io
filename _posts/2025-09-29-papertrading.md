@@ -122,16 +122,17 @@ Depth and genuine buy-side flow are consistently present; take-profit hits are c
 
 ## Figures and tables
 
-Figure 1 gives the full session × variant summary table (win rate, returns, PnL, MFE/MAE, median hold).
+All figures for this study are collected below for convenience. Click any thumbnail to view the full-size chart; use arrows to navigate. Captions highlight the main takeaway of each plot.
 
-Figures 2–4 break out win rate, total PnL, and mean returns by session and variant.
+* **Figure 1.** Session × Variant summary table: win rate, returns, PnL, MFE/MAE, and median hold times.
+* **Figure 2.** Win rates by session and variant (dashed line at 50% benchmark).
+* **Figure 3.** Total PnL (in SOL) segmented by session and variant.
+* **Figure 4.** Mean returns (%) for each session and variant.
+* **Figure 5.** Return distributions (boxplots), showing dispersion, skew, and median.
+* **Figure 6.** Cumulative PnL curves over time, faceted by session.
+* **Figure 7.** Exit reason mix (take profit, stop loss, timeout) by session and variant.
+* **Figure 8.** Live cumulative PnL curve for reference against paper mode.
 
-Figure 5 shows return distributions; Figure 6 tracks cumulative PnL over time.
-
-Figure 7 highlights the exit-reason mix, which explains why 00–08 is timeout-heavy while 16–24 sees frequent TP hits.
-
-Figure 8 is the live cumulative PnL curve for context.
-Click any thumbnail to view full-size; captions note the key takeaway so you can scan quickly and then dig into the sections above for interpretation.
 
 {% include gallery id="gallery" caption="All figures for this study. Click any thumbnail to open; use arrows to navigate. Captions summarise the takeaway for each chart." %}
 
@@ -157,21 +158,3 @@ I’ll publish the full tables and survival plots in a follow-up article, but th
 * Promote **16–24 score** to live rotation with existing risk caps.
 * Continue **session-specific grid searches** for entries, exits, and trailing overlays.
 * Publish the detailed appendices: Monte Carlo, shrinkage, MFE/MAE efficiency, and survival analysis.
-
----
-
-## LinkedIn summary (use one chart—recommend the Total PnL by Session/Variant)
-
-Six months ago I found a discrete indicator that helps separate alpha from noise in fresh Solana tokens. I’ve now made the system session-aware and ran 3.5 days of paper trading: **207 trades** across **103 tokens** with three variants per session (prime, pnl, score).
-
-Results
-• **16–24 (Europe/London)** is the clear leader: **win rate 66–68%**, **median return up to 44%**, **total PnL 4.9 SOL** on the **score** variant.
-• **08–16** is around breakeven with a thin edge.
-• **00–08** is structurally weak; dominated by timeouts and negative expectancy.
-
-I’ve also run Monte Carlo resampling, small-N shrinkage, MFE/MAE efficiency, and time-to-exit survival to sanity-check the rankings. I’ll share the tables and curves in a follow-up.
-
-Full write-up and charts on the blog:
-Session-aware results (this post)
-
-If you’re working on algorithmic trading, quant research, or Solana microstructure, happy to connect.
